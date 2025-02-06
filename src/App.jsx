@@ -5,6 +5,8 @@ import Snippet from "./components/Snippet";
 import Input from "./components/Input";
 import Feedback from "./components/feedback";
 import "./App.css";
+const LOCAL_API = "http://localhost:5000/api/random";
+const REMOTE_API = "https://codesist-v1.onrender.com/api/random"
 
 function App() {
   const [snippet, setSnippet] = useState("");
@@ -39,7 +41,7 @@ function App() {
     }
 
     try {
-      const response = await axios.get("http://localhost:5000/api/random", {
+      const response = await axios.get(REMOTE_API, {
         params: { language, difficulty },
       });
 
