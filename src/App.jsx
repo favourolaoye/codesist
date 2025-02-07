@@ -85,26 +85,29 @@ function App() {
 
     // Identify mismatches
     const newErrors = [];
-    let currentError = { position: null, expected: "", actual: "" };
+    let errorStart = null;
+    let expectedStr = "";
+    let actualStr = "";
     
     for (let i = 0; i < Math.max(snippetLength, userInputLength); i++) {
       if (snippet[i] !== userInput[i]) {
-        if (currentError.position === null) {
-          // Start a new error block
-          currentError.position = i;
+        if (errorStart === null) {
+          errorStart = i; // Mark start of mismatch
         }
-        currentError.expected += snippet[i] || "";
-        currentError.actual += userInput[i] || "";
-      } else if (currentError.position !== null) {
-        // Push the accumulated error block and reset
-        newErrors.push({ ...currentError });
-        currentError = { position: null, expected: "", actual: "" };
+        expectedStr += snippet[i] || ""; // Append expected characters
+        actualStr += userInput[i] || ""; // Append actual characters
+      } else if (errorStart !== null) {
+        // Store accumulated error and reset tracking
+        newErrors.push({ position: errorStart, expected: expectedStr, actual: actualStr });
+        errorStart = null;
+        expectedStr = "";
+        actualStr = "";
       }
     }
     
-    // Push the last error block if it exists
-    if (currentError.position !== null) {
-      newErrors.push({ ...currentError });
+    // Push last accumulated error if it exists
+    if (errorStart !== null) {
+      newErrors.push({ position: errorStart, expected: expectedStr, actual: actualStr });
     }
     
     console.log(newErrors);
