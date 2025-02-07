@@ -85,15 +85,30 @@ function App() {
 
     // Identify mismatches
     const newErrors = [];
+    let currentError = { position: null, expected: "", actual: "" };
+    
     for (let i = 0; i < Math.max(snippetLength, userInputLength); i++) {
       if (snippet[i] !== userInput[i]) {
-        newErrors.push({
-          position: i,
-          expected: snippet[i] || "",
-          actual: userInput[i] || "",
-        });
+        if (currentError.position === null) {
+          // Start a new error block
+          currentError.position = i;
+        }
+        currentError.expected += snippet[i] || "";
+        currentError.actual += userInput[i] || "";
+      } else if (currentError.position !== null) {
+        // Push the accumulated error block and reset
+        newErrors.push({ ...currentError });
+        currentError = { position: null, expected: "", actual: "" };
       }
     }
+    
+    // Push the last error block if it exists
+    if (currentError.position !== null) {
+      newErrors.push({ ...currentError });
+    }
+    
+    console.log(newErrors);
+    
 
     setAccuracy(newAccuracy);
     setCpm(newCpm);
